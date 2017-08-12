@@ -1,6 +1,4 @@
 test:
-	echo '[*] testing'
-	echo '[*] cleaning results directory'
-	rm tests/results/* || true
-	python tests.py
-	echo '[*] end testing'
+	@echo '[*] cleaning results directory'
+	@rm tests/results/* 2> /dev/null || true
+	@python tests.py
