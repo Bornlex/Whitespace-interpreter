@@ -1,7 +1,8 @@
 #! /usr/bin/python3.5
 
 from conf.conf import *
-from ast import *
+from parser.ast import *
+from utils.utils import *
 
 AST_CHOOSER = {
     STACK: StackAst,
@@ -38,10 +39,15 @@ class Parser(object):
     def remove_forbidden_chars(self, content):
         return ''.join(c for c in content if c in self.allowed_chars)
 
-    def parse(self):
+    def parse(self, content):
         current_ast = None
-        index = len(content)
+        stack = []
+        wil_instructions = []
+        index = 0
         while True:
+            if index == len(content):
+                self.mode = None
+                return wil_instructions
             c = content[index]
             if self.mode is None:
                 if c == ' ':
@@ -63,11 +69,31 @@ class Parser(object):
                     raise Exception('Mode error: not recognized')
                 index += 1
                 current_ast = AST_CHOOSER[self.mode]
+            elif self.mode == ARGS:
+                tmp_index = 0
+                arg = []
+                while content[index + tmp_index] != '\n':
+                    arg.append(content[index + tmp_index])
+                    tmp_index += 1
+                wil_instructions[len(wil_instructions) - 1] = (wil_instructions[len(wil_instructions) - 1], compute_number(arg))
+                index += tmp_index + 1
+                stack = []
+                self.mode = None
             else:
-                pass
+                try:
+                    stack.append(self.correspondences[c])
+                    node = current_ast.has_reached_leaf(stack)
+                    if node[0]:
+                        wil_instructions.append(node[2])
+                        stack = []
+                        if node[1]:
+                            self.mode = ARGS
+                        else:
+                            self.mode = None
+                except:
+                    print('Something went wrong whislt parsing, exiting')
+                    return
+                index += 1
 
 if __name__ == "__main__":
-    filename = 'examples/wrong_chars_push_4.ws'
-    p = Parser()
-    c = open(filename, 'r').read()
-    print(c)
+    pass

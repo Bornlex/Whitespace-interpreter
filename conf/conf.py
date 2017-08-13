@@ -18,5 +18,6 @@ ARITH = 1
 HEAP  = 2
 FLOW  = 3
 IO    = 4
+ARGS  = 5
 
 ### !MACRO ###

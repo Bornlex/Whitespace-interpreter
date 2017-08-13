@@ -25,10 +25,23 @@ class bcolors:
 examples_dir_name = 'examples/'
 tests_dir_name = 'tests/'
 
-files = {
+files_txt = [
     'wrong_chars_push_4.ws',
     'push_4.ws'
-}
+]
+
+files_wil_simples = [
+    'WIL/dup.ws',
+    'WIL/push_1.ws',
+    'WIL/set_label.ws'
+]
+
+files_wil_medium = [
+    'WIL/push_dup.ws',
+    'WIL/pop_add.ws'
+]
+
+DEBUG = False
 
 ### !CONSTANTS ###
 
@@ -38,10 +51,33 @@ p = Parser()
 
 ### !PARSER ###
 
+### UTILS ###
+
+def compare_list(l1, l2, wil=False):
+    if l1 is None and l2 is not None:
+        return False
+    if l2 is None and l1 is not None:
+        return False
+    if len(l1) != len(l2):
+        return False
+    if wil:
+        for i in range(len(l1)):
+            if type(l1[i]) is tuple:
+                l1[i] = '{} {}'.format(l1[i][0], l1[i][1])
+            if type(l2[i]) is tuple:
+                l2[i] = '{} {}'.format(l2[i][0], l2[i][1])
+    for i in range(len(l1)):
+        if l1[i] != l2[i]:
+            return False
+    return True
+
+### !UTILS ###
+
 
 if __name__ == '__main__':
     print(bcolors.BOLD + 'Testing [PARSER]' + bcolors.ENDC)
-    for f in files:
+    print(bcolors.BOLD + '[PARSER][1/3] WS -> TXT' + bcolors.ENDC)
+    for f in files_txt:
         name = examples_dir_name + f
         tname = tests_dir_name + f
         content = open(name, 'r').read()
@@ -62,10 +98,33 @@ if __name__ == '__main__':
             res.write(example_result)
             res.write('\n============================')
             res.close()
-    print(bcolors.BOLD + 'To see what failed in tests, check /tests/results/filename.result' + bcolors.ENDC + '\n')
+    print('To see what failed in tests, check /tests/results/filename.result\n')
+    print(bcolors.BOLD + '[PARSER][2/3] WS -> WIL EASY' + bcolors.ENDC)
+    for f in files_wil_simples:
+        name = examples_dir_name + f
+        tname = name.replace('.ws', '.wil')
+        content = open(name, 'r').read()
+        tcontent = open(tname, 'r').read().split('\n')
+        result = p.parse(content)
+        if compare_list(result, tcontent, True):
+            print('[{}OK{}] test {} passed'.format(bcolors.OKGREEN, bcolors.ENDC, name))
+        else:
+            print('[{}KO{}] {}, had: {}, expected: {}'.format(bcolors.FAIL, bcolors.ENDC, name, result, tcontent))
+    print('')
+    print(bcolors.BOLD + '[PARSER][3/3] WS -> WIL MEDIUM' + bcolors.ENDC)
+    for f in files_wil_medium:
+        name = examples_dir_name + f
+        tname = name.replace('.ws', '.wil')
+        content = open(name, 'r').read()
+        tcontent = open(tname, 'r').read().split('\n')
+        result = p.parse(content)
+        if compare_list(result, tcontent, True):
+            print('[{}OK{}] test {} passed'.format(bcolors.OKGREEN, bcolors.ENDC, name))
+        else:
+            print('[{}KO{}] {}, had: {}, expected: {}'.format(bcolors.FAIL, bcolors.ENDC, name, result, tcontent))
 
     #AST TESTING
-    print(bcolors.BOLD + 'Testing [AST]' + bcolors.ENDC)
+    print('\n\n' + bcolors.BOLD + 'Testing [AST]' + bcolors.ENDC)
     ast_tests = [
         (len(StackAst.sons), 3, 'len(StackAst.sons)'),
         (len(StackAst.sons['S'].sons), 0, 'len(StackAst.sons[S].sons)'),

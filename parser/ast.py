@@ -74,13 +74,16 @@ class Character(object):
             return
         self.sons[chars[0]].add(chars[1:], has_param, wil_representation)
 
+    #returns a tuple (is_leaf, has_param, representation)
     def has_reached_leaf(self, chars):
         if len(chars) == 0:
-            return self.is_leaf
+            if self.is_leaf:
+                return (True, self.has_param, self.wil_representation)
+            return (False, None, None)
         if self.is_leaf:
             if len(chars) != 0:
                 raise Exception('Syntax error: character {} is strange. Instruction "{}" should be over.'.format(self.char, self.wil_representation))
-            return True
+            return (True, self.has_param, self.wil_representation)
         return self.sons[chars[0]].has_reached_leaf(chars[1:])
 
 
