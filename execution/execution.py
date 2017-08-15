@@ -1,5 +1,7 @@
 #! /usr/bin/python3.5
 
+import sys
+
 ### STACK FUNCTIONS ###
 
 def push(arg):
@@ -111,16 +113,28 @@ def end():
 ### IO FUNCTIONS ###
 
 def outc():
-    pass
+    if len(Stack) == 0:
+        raise Exception('Stack is empty: cannot print char')
+    sys.write(chr(Stack[-1]))
+    pop()
 
 def outi():
-    pass
+    if len(Stack) == 0:
+        raise Exception('Stack is empty: cannot print int')
+    sys.write(Stack[-1])
+    pop()
 
 def inc():
-    pass
+    if len(Stack) == 0:
+        raise Exception('No address found on the stack for readin char')
+    Heap[Stack[-1]] = sys.stdin.read(1)
+    pop()
 
 def ini():
-    pass
+    if len(Stack) == 0:
+        raise Exception('No address found on the stack for readin int')
+    Heap[Stack[-1]] = sys.stdin.read(1)
+    pop()
 
 ### !IO FUNCTIONS ###
 
