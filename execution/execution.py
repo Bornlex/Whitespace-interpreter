@@ -1,6 +1,18 @@
 #! /usr/bin/python3.5
 
 import sys
+import tty
+import termios
+
+def getchar():
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setno(sys.stdin.fileno())
+        ch = sys.stdin.read(1)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    return ch
 
 ### STACK FUNCTIONS ###
 
@@ -127,13 +139,13 @@ def outi():
 def inc():
     if len(Stack) == 0:
         raise Exception('No address found on the stack for readin char')
-    Heap[Stack[-1]] = sys.stdin.read(1)
+    Heap[Stack[-1]] = getchr()
     pop()
 
 def ini():
     if len(Stack) == 0:
         raise Exception('No address found on the stack for readin int')
-    Heap[Stack[-1]] = sys.stdin.read(1)
+    Heap[Stack[-1]] = getchr()
     pop()
 
 ### !IO FUNCTIONS ###
