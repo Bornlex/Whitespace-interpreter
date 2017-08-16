@@ -4,6 +4,8 @@ import sys
 import tty
 import termios
 
+DEBUG = True
+
 def getchar():
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
@@ -101,25 +103,46 @@ def retrieve():
 ### FLOW FUNCTIONS ###
 
 def label(arg):
-    pass
+    if arg is None:
+        raise Exception('Label is undefined')
+    if arg in Labels:
+        raise Exception('This label is already registered')
+    eip = Labels[arg]
 
 def call(arg):
-    pass
+    index_routine = Routines[arg]
+    eip = index_routine
 
 def jmp(arg):
-    pass
+    if arg is None:
+        raise Exception('Label is undefined')
+    if arg in Labels:
+        raise Exception('This label is already registered')
+    eip = Labels[arg]
 
 def jmpz(arg):
-    pass
+    if arg is None:
+        raise Exception('Label is undefined')
+    if arg in Labels:
+        raise Exception('This label is already registered')
+    if Stack[-1] == 0:
+        eip = Labels[arg]
+    pop()
 
 def jmpneg(arg):
-    pass
+    if arg is None:
+        raise Exception('Label is undefined')
+    if arg in Labels:
+        raise Exception('This label is already registered')
+    if Stack[-1] < 0:
+        eip = Labels[arg]
+    pop()
 
 def ret():
-    pass
+    eip = caller
 
 def end():
-    pass
+    finished = True
 
 ### !FLOW FUNCTIONS ###
 ### IO FUNCTIONS ###
@@ -150,25 +173,80 @@ def ini():
 
 ### !IO FUNCTIONS ###
 
-
+#just the simple stack
 Stack = []
+#dictionary addresses -> value
 Heap = {}
+#dictionary values -> index in the list of instructions
+Labels = {}
+#dictionary names -> index
+Routines = {}
+#index of execution, register the index of the instruction being read
+eip = 0
+#index of function that called another function
+caller = None
+#boolean to know if we need to exit the program or not
+finished = False
+
 
 Instructions = {
-    'push': push,
-    'dup' : dup,
-    'pop' : pop,
-    'copy': copy
+    'push'  : push,
+    'dup'   : dup,
+    'pop'   : pop,
+    'copy'  : copy,
+    'swap'  : swap,
+    'slide' : slide,
+    'add'   : add,
+    'sub'   : sub,
+    'mul'   : mul,
+    'div'   : div,
+    'mod'   : mod,
+    'store' : store,
+    'retri' : retrieve,
+    'label' : label,
+    'call'  : call,
+    'jmp'   : jmp,
+    'jmpz'  : jmpz,
+    'jmpneg': jmpneg,
+    'ret'   : ret,
+    'end'   : end,
+    'outc'  : outc,
+    'outi'  : outi,
+    'inc'   : inc,
+    'ini'   : ini
 }
 
 
+def debug_infos():
+    print('==============================')
+    print('Debug info:')
+    print('\tStack:    {}'.format(Stack))
+    print('\tHeap:     {}'.format(Heap))
+    print('\tLabels:   {}'.format(Labels))
+    print('\tRoutines: {}'.format(Routines))
+    print('\teip:      {}'.format(eip))
+    print('\tcaller:   {}'.format(caller))
+    print('\tfinished: {}'.format(finished))
+    print('==============================')
+
+def function_call(function_name):
+    if function_name not in Routines:
+        raise Exception('Function {} not defined'.format(function_name))
+    caller = eip + 1
+
 def execute(instructions):
-    for ins in instructions:
+    for eip in range(len(instructions)):
+        ins = instructions[eip]
         if type(ins) is tuple:
             operator = ins[0]
             operand = ins[1]
+            if operator == 'call':
+                function_call()
             Instructions[operator](operand)
         else:
             Instructions[ins]()
-        print('after execution of {}, stack is: {}, heap is: {}'.format(ins, Stack, Heap))
+        if DEBUG:
+            debug_infos()
+        if finished:
+            return
         
