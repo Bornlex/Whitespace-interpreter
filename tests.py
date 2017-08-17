@@ -7,6 +7,9 @@ import os
 
 from parser.parser import *
 from conf.conf import *
+from execution.execution import *
+
+ex = sys.modules['execution.execution']
 
 ### !IMPORTS ###
 
@@ -41,6 +44,11 @@ files_wil_medium = [
     'WIL/pop_add.ws'
 ]
 
+STACK_POS =    0
+HEAP_POS =     1
+LABELS_POS =   2
+ROUTINES_POS = 3
+
 DEBUG = False
 
 ### !CONSTANTS ###
@@ -52,6 +60,27 @@ p = Parser()
 ### !PARSER ###
 
 ### UTILS ###
+
+def restore_context():
+    ex.Stack = []
+    ex.Heap = {}
+    ex.Labels = {}
+    ex.Routines = {}
+    ex.eip = 0
+    ex.caller = None
+    ex.finished = False
+
+def perform_test(test):
+    execute(test[0])
+    if ex.Stack != test[1][STACK_POS]:
+        return False
+    if ex.Heap != test[1][HEAP_POS]:
+        return False
+    if ex.Labels != test[1][LABELS_POS]:
+        return False
+    if ex.Routines != test[1][ROUTINES_POS]:
+        return False
+    return True
 
 def compare_list(l1, l2, wil=False):
     if l1 is None and l2 is not None:
@@ -153,3 +182,16 @@ if __name__ == '__main__':
             print('[{}OK{}] {}'.format(bcolors.OKGREEN, bcolors.ENDC, t[2]))
         else:
             print('[{}KO{}] {}, got: {}, expected: {}'.format(bcolors.FAIL, bcolors.ENDC, t[2], t[0], t[1]))
+
+    #EXECUTION TESTING
+    print('\n\n' + bcolors.BOLD + 'Testing [EXECUTION]' + bcolors.ENDC)
+    execution_tests = [
+        ([('push', 1), 'dup'], ([1, 1], {}, {}, {}), 'push 1, dup'),
+        ([('push', 2), 'dup', 'add'], ([4], {}, {}, {}), 'push 2, dup, add')
+    ]
+    for t in execution_tests:
+        if perform_test(t):
+            print('[{}OK{}] {}'.format(bcolors.OKGREEN, bcolors.ENDC, t[2]))
+        else:
+            print('[{}KO{}] {}, got: ({} {} {} {}), expected: {}'.format(bcolors.FAIL, bcolors.ENDC, t[2], Stack, Heap, Labels, Routines, t[1]))
+        restore_context()

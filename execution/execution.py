@@ -4,7 +4,7 @@ import sys
 import tty
 import termios
 
-DEBUG = True
+DEBUG = False
 
 def getchar():
     fd = sys.stdin.fileno()
@@ -52,31 +52,31 @@ def slide(arg):
 ### ARITH FUNCTIONS ###
 
 def add():
-    if len(Stack < 2):
+    if len(Stack) < 2:
         raise Exception('Stack is too small (< 2), cannot add')
     Stack[-2] = Stack[-2] + Stack[-1]
     pop()
 
 def sub():
-    if len(Stack < 2):
+    if len(Stack) < 2:
         raise Exception('Stack is too small (< 2), cannot sub')
     Stack[-2] = Stack[-2] - Stack[-1]
     pop()
 
 def mul():
-    if len(Stack < 2):
+    if len(Stack) < 2:
         raise Exception('Stack is too small (< 2), cannot mul')
     Stack[-2] = Stack[-2] * Stack[-1]
     pop()
 
 def div():
-    if len(Stack < 2):
+    if len(Stack) < 2:
         raise Exception('Stack is too small (< 2), cannot div')
     Stack[-2] = Stack[-2] / Stack[-1]
     pop()
 
 def mod():
-    if len(Stack < 2):
+    if len(Stack) < 2:
         raise Exception('Stack is too small (< 2), cannot mod')
     Stack[-2] = Stack[-2] % Stack[-1]
     pop()
@@ -217,6 +217,7 @@ Instructions = {
 }
 
 
+
 def debug_infos():
     print('==============================')
     print('Debug info:')
@@ -250,3 +251,5 @@ def execute(instructions):
         if finished:
             return
         
+if __name__ == '__main__':
+    DEBUG = True
