@@ -1,12 +1,7 @@
 # WhiteSpace VM
 > A whitespace programming language VM
 
-[![Python Version][python-image]][python-url]
-[![Pip Version][pip-image]][pip-url]
-
 The following program executes .ws (WhiteSpace) files.
-
-![](header.png)
 
 ## About
 
@@ -29,6 +24,9 @@ OS X, Linux & Windows:
 ```sh
 git clone https://github.com/Bornlex/WhitespaceCompiler.git
 ```
+
+The Python version I used to implement and run it is 3.5.
+It is possible that it won't work with verions under 3 because of the importing system, but I did not test it.
 
 ## Usage example
 
@@ -58,7 +56,7 @@ Do not hesitate to contact me for any information or feedback:
 
 jseveno.piltant@gmail.com
 
-Distributed under the XYZ license. See ``LICENSE`` for more information.
+Distributed under the MIT license. See ``LICENSE`` for more information.
 
 ## Contributing
 
@@ -67,9 +65,3 @@ Distributed under the XYZ license. See ``LICENSE`` for more information.
 3. Commit your changes (`git commit -am 'Add some fooBar'`)
 4. Push to the branch (`git push origin feature/fooBar`)
 5. Create a new Pull Request
-
-<!-- Markdown link & img dfn's -->
-[python-image]: https://img.shields.io/npm/v/datadog-metrics.svg?style=flat-square
-[python-url]: https://www.python.org/
-[pip-image]: https://img.shields.io/travis/dbader/node-datadog-metrics/master.svg?style=flat-square
-[pip-url]: https://pypi.python.org/pypi/pip
