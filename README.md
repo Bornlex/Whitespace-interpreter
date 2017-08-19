@@ -11,16 +11,16 @@ The following program executes .ws (WhiteSpace) files.
 ## About
 
 Whitespace is an esoteric programming language that makes use of only 3 characters:
-    - whitespace (of course)
-    - tab
-    - line feed
+* whitespace (of course)
+* tab
+* line feed
 
 It has been invented by Edwin Brady & Chris Morris and released on 1st April 2003.
 
 This is not that easy to find documentation and resources about writing Whitespace, but here are some good ones:
-     - [http://web.archive.org/web/20150426193527/http://compsoc.dur.ac.uk:80/whitespace/tutorial.php](http://web.archive.org/web/20150426193527/http://compsoc.dur.ac.uk:80/whitespace/tutorial.php) (specs)
-     - [http://vii5ard.github.io/whitespace/](http://vii5ard.github.io/whitespace/) (IDE)
-     - [http://www.whoishostingthis.com/resources/whitespace-programming/](http://www.whoishostingthis.com/resources/whitespace-programming/) (Tutorial)
+* [Specs](http://web.archive.org/web/20150426193527/http://compsoc.dur.ac.uk:80/whitespace/tutorial.php)
+* [IDE](http://vii5ard.github.io/whitespace/)
+* [Tutorial](http://www.whoishostingthis.com/resources/whitespace-programming/)
 
 ## Installation
 
