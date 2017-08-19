@@ -6,6 +6,7 @@ import termios
 
 DEBUG = False
 
+
 def getchar():
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
@@ -24,7 +25,7 @@ def push(arg):
 def dup():
     if len(Stack) == 0:
         raise Exception('Stack exception: nothing to duplicate')
-    Stack.append(Stack[len(Stack) - 1])
+    Stack.append(Stack[-1])
 
 def copy(arg):
     if arg >= len(Stack):
@@ -107,41 +108,49 @@ def label(arg):
         raise Exception('Label is undefined')
     if arg in Labels:
         raise Exception('This label is already registered')
-    eip = Labels[arg]
+    Labels[arg] = eip + 1
 
 def call(arg):
     index_routine = Routines[arg]
+    global eip
     eip = index_routine
 
 def jmp(arg):
     if arg is None:
         raise Exception('Label is undefined')
-    if arg in Labels:
-        raise Exception('This label is already registered')
+    global eip
     eip = Labels[arg]
 
 def jmpz(arg):
+    global eip
+    global condition
     if arg is None:
         raise Exception('Label is undefined')
-    if arg in Labels:
-        raise Exception('This label is already registered')
     if Stack[-1] == 0:
         eip = Labels[arg]
+        condition = True
+    else:
+        condition = False
     pop()
 
 def jmpneg(arg):
+    global eip
+    global condition
     if arg is None:
         raise Exception('Label is undefined')
-    if arg in Labels:
-        raise Exception('This label is already registered')
     if Stack[-1] < 0:
         eip = Labels[arg]
+        condition = True
+    else:
+        condition = False
     pop()
 
 def ret():
+    global eip
     eip = caller
 
 def end():
+    global finished
     finished = True
 
 ### !FLOW FUNCTIONS ###
@@ -150,13 +159,13 @@ def end():
 def outc():
     if len(Stack) == 0:
         raise Exception('Stack is empty: cannot print char')
-    sys.write(chr(Stack[-1]))
+    sys.stdout.write(chr(Stack[-1]))
     pop()
 
 def outi():
     if len(Stack) == 0:
         raise Exception('Stack is empty: cannot print int')
-    sys.write(Stack[-1])
+    sys.stdout.write(str(Stack[-1]))
     pop()
 
 def inc():
@@ -187,7 +196,10 @@ eip = 0
 caller = None
 #boolean to know if we need to exit the program or not
 finished = False
-
+#boolean to know if the conditional instruction like jmp, jmpz etc
+#was true or not (i.e.: Stack [0], ins = jmpz => this context is going
+# to make the execution jump because jmpz is True, so condition = True)
+condition = False
 
 Instructions = {
     'push'  : push,
@@ -218,14 +230,14 @@ Instructions = {
 
 
 
-def debug_infos():
+def debug_infos(instructions):
     print('==============================')
     print('Debug info:')
     print('\tStack:    {}'.format(Stack))
     print('\tHeap:     {}'.format(Heap))
     print('\tLabels:   {}'.format(Labels))
     print('\tRoutines: {}'.format(Routines))
-    print('\teip:      {}'.format(eip))
+    print('\teip:      {} ({})'.format(eip, instructions[eip]))
     print('\tcaller:   {}'.format(caller))
     print('\tfinished: {}'.format(finished))
     print('==============================')
@@ -233,10 +245,27 @@ def debug_infos():
 def function_call(function_name):
     if function_name not in Routines:
         raise Exception('Function {} not defined'.format(function_name))
+    global caller
     caller = eip + 1
 
+#this function is needed because in case of a label instruction, eip
+#is set to label index + 1, but eip is also incremented at the end
+#of the loop
+def update_eip(ins):
+    global eip
+    if type(ins) is tuple:
+        if ins[0] == 'jmp' or ins[0] == 'jmpz' or ins[0] == 'jmpneg':
+            if condition:
+                return
+            eip += 1
+            return
+        else:
+            eip += 1
+            return
+    eip += 1
+
 def execute(instructions):
-    for eip in range(len(instructions)):
+    while eip < len(instructions):
         ins = instructions[eip]
         if type(ins) is tuple:
             operator = ins[0]
@@ -247,7 +276,8 @@ def execute(instructions):
         else:
             Instructions[ins]()
         if DEBUG:
-            debug_infos()
+            debug_infos(instructions)
+        update_eip(ins)
         if finished:
             return
         

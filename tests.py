@@ -49,7 +49,7 @@ HEAP_POS =     1
 LABELS_POS =   2
 ROUTINES_POS = 3
 
-DEBUG = False
+ex.DEBUG = False
 
 ### !CONSTANTS ###
 
@@ -187,11 +187,12 @@ if __name__ == '__main__':
     print('\n\n' + bcolors.BOLD + 'Testing [EXECUTION]' + bcolors.ENDC)
     execution_tests = [
         ([('push', 1), 'dup'], ([1, 1], {}, {}, {}), 'push 1, dup'),
-        ([('push', 2), 'dup', 'add'], ([4], {}, {}, {}), 'push 2, dup, add')
+        ([('push', 2), 'dup', 'add'], ([4], {}, {}, {}), 'push 2, dup, add'),
+        ([('label', 0)], ([], {}, {0: 0}, {}), 'label 0')
     ]
     for t in execution_tests:
+        restore_context()
         if perform_test(t):
             print('[{}OK{}] {}'.format(bcolors.OKGREEN, bcolors.ENDC, t[2]))
         else:
             print('[{}KO{}] {}, got: ({} {} {} {}), expected: {}'.format(bcolors.FAIL, bcolors.ENDC, t[2], Stack, Heap, Labels, Routines, t[1]))
-        restore_context()

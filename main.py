@@ -12,5 +12,18 @@ if __name__ == '__main__':
     c = open(filename, 'r').read()
     content = p.remove_forbidden_chars(c)
     instructions = p.parse(content)
+    instructions = [
+        ('push', 1),
+        ('label', 0),
+        'dup',
+        'outi',
+        ('push', 1),
+        'add',
+        'dup',
+        ('push', 5),
+        'sub',
+        ('jmpneg', 0),
+        'end'
+    ]
     print(instructions)
     execute(instructions)
