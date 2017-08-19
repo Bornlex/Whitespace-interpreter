@@ -4,7 +4,7 @@ import sys
 import tty
 import termios
 
-DEBUG = False
+DEBUG = True
 
 
 def getchar():
@@ -30,7 +30,7 @@ def dup():
 def copy(arg):
     if arg >= len(Stack):
         raise Exception('Stack is smaller than index to copy')
-    Stack.append(Stack[arg])
+    Stack.append(Stack[-(arg - 1)])
 
 def swap():
     if len(Stack) < 2:
@@ -45,9 +45,12 @@ def pop():
     Stack.pop()
 
 def slide(arg):
-    if arg > len(Stack):
-        raise Exception('Stack is smaller that the number to slide')
-    Stack = Stack[arg:]
+    global Stack
+    if arg >= len(Stack):
+        Stack = [Stack[-1]]
+    top = Stack[-1]
+    Stack = Stack[:-(arg + 1)]
+    Stack.append(top)
 
 ### !STACK FUNCTIONS ###
 ### ARITH FUNCTIONS ###

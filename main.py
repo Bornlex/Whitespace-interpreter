@@ -12,7 +12,7 @@ if __name__ == '__main__':
     c = open(filename, 'r').read()
     content = p.remove_forbidden_chars(c)
     instructions = p.parse(content)
-    instructions = [
+    loop_instructions = [
         ('push', 1),
         ('label', 0),
         'dup',
@@ -25,5 +25,6 @@ if __name__ == '__main__':
         ('jmpneg', 0),
         'end'
     ]
+    instructions = [('push', 1), ('push', 2), ('push', 3), ('slide', 2)]
     print(instructions)
     execute(instructions)

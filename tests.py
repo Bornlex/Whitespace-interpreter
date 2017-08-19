@@ -186,9 +186,15 @@ if __name__ == '__main__':
     #EXECUTION TESTING
     print('\n\n' + bcolors.BOLD + 'Testing [EXECUTION]' + bcolors.ENDC)
     execution_tests = [
-        ([('push', 1), 'dup'], ([1, 1], {}, {}, {}), 'push 1, dup'),
-        ([('push', 2), 'dup', 'add'], ([4], {}, {}, {}), 'push 2, dup, add'),
-        ([('label', 0)], ([], {}, {0: 0}, {}), 'label 0')
+        ([('push', 1)], ([1], {}, {}, {}), 'push'),
+        ([('push', 1), 'dup'], ([1, 1], {}, {}, {}), 'dup'),
+        ([('push', 2), 'dup', 'add'], ([4], {}, {}, {}), 'add'),
+        ([('label', 0)], ([], {}, {0: 1}, {}), 'label 0'),
+        ([('push', 1), ('push', 2), ('copy', 1)], ([1, 2, 1], {}, {}, {}), 'copy'),
+        ([('push', 1), ('push', 2), 'swap'], ([2, 1], {}, {}, {}), 'swap'),
+        ([('push', 10), 'pop'], ([], {}, {}, {}), 'pop'),
+        ([('push', 3), 'dup', 'sub'], ([0], {}, {}, {}), 'sub'),
+        ([('push', 1), ('push', 2), ('push', 3), ('slide', 2)], ([3], {}, {}, {}), 'slide')
     ]
     for t in execution_tests:
         restore_context()
