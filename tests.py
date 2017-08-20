@@ -188,17 +188,22 @@ if __name__ == '__main__':
     execution_tests = [
         ([('push', 1)], ([1], {}, {}, {}), 'push'),
         ([('push', 1), 'dup'], ([1, 1], {}, {}, {}), 'dup'),
-        ([('push', 2), 'dup', 'add'], ([4], {}, {}, {}), 'add'),
-        ([('label', 0)], ([], {}, {0: 1}, {}), 'label 0'),
         ([('push', 1), ('push', 2), ('copy', 1)], ([1, 2, 1], {}, {}, {}), 'copy'),
         ([('push', 1), ('push', 2), 'swap'], ([2, 1], {}, {}, {}), 'swap'),
         ([('push', 10), 'pop'], ([], {}, {}, {}), 'pop'),
+        ([('push', 1), ('push', 2), ('push', 3), ('slide', 2)], ([3], {}, {}, {}), 'slide'),
+        ([('push', 2), 'dup', 'add'], ([4], {}, {}, {}), 'add'),
         ([('push', 3), 'dup', 'sub'], ([0], {}, {}, {}), 'sub'),
-        ([('push', 1), ('push', 2), ('push', 3), ('slide', 2)], ([3], {}, {}, {}), 'slide')
+        ([('push', 3), 'dup', 'mul'], ([9], {}, {}, {}), 'mul'),
+        ([('push', 5), ('push', 2), 'div'], ([2], {}, {}, {}), 'div'),
+        ([('push', 5), ('push', 2), 'mod'], ([1], {}, {}, {}), 'mod'),
+        ([('push', 'ad1'), ('push', 2), 'store'], ([], {'ad1': 2}, {}, {}), 'store'),
+        ([('push', 'ad1'), ('push', 2), 'store', ('push', 'ad1'), 'retri'], ([2], {'ad1': 2}, {}, {}), 'retrieve'),
+        ([('label', 0)], ([], {}, {0: 1}, {}), 'label 0'),
     ]
     for t in execution_tests:
         restore_context()
         if perform_test(t):
             print('[{}OK{}] {}'.format(bcolors.OKGREEN, bcolors.ENDC, t[2]))
         else:
-            print('[{}KO{}] {}, got: ({} {} {} {}), expected: {}'.format(bcolors.FAIL, bcolors.ENDC, t[2], Stack, Heap, Labels, Routines, t[1]))
+            print('[{}KO{}] {}, got: ({} {} {} {}), expected: {}'.format(bcolors.FAIL, bcolors.ENDC, t[2], ex.Stack, ex.Heap, ex.Labels, ex.Routines, t[1]))

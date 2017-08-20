@@ -76,7 +76,7 @@ def mul():
 def div():
     if len(Stack) < 2:
         raise Exception('Stack is too small (< 2), cannot div')
-    Stack[-2] = Stack[-2] / Stack[-1]
+    Stack[-2] = int(Stack[-2] / Stack[-1])
     pop()
 
 def mod():
