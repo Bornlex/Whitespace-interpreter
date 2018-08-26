@@ -1,5 +1,5 @@
-# WhiteSpace VM
-> A whitespace programming language VM
+# WhiteSpace Interpreter
+> A whitespace programming language interpreter
 
 The following program executes .ws (WhiteSpace) files.
 
