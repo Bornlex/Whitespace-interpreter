@@ -16,4 +16,4 @@ def compute_number(arg):
     if len(arg) == 1:
         return 0
     binary = [1 if c == TAB else 0 for c in arg[1:]]
-    return sign * (binary[0] + sum([pow(2 * b, i) for i, b in enumerate(binary[1:])]))
+    return sign * (binary[-1] + sum([pow(2 * b, len(binary) - i -1) for i, b in enumerate(binary[:-1])]))
